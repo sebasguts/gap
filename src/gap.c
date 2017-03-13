@@ -119,6 +119,10 @@
 
 #include <src/util.h>
 
+#if defined(LIBGAP)
+#include <src/libgap.h>
+#endif
+
 /****************************************************************************
 **
 
@@ -1155,6 +1159,11 @@ Obj FuncJUMP_TO_CATCH( Obj self, Obj payload)
 {
   STATE(ThrownObject) = payload;
   syLongjmp(&(STATE(ReadJmpError)), 1);
+#if defined(LIBGAP)
+  libgap_call_error_handler();
+#endif
+  STATE(ThrownObject) = payload;
+  syLongjmp(TLS(ReadJmpError), 1);
   return 0;
 }
 
