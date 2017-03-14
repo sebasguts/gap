@@ -120,7 +120,7 @@
 #include <src/util.h>
 
 #if defined(LIBGAP)
-#include <src/libgap.h>
+#include <src/sage_interface.h>
 #endif
 
 /****************************************************************************
