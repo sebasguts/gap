@@ -219,6 +219,8 @@ static Int NrImportedFuncs;
 
 static char **sysenviron;
 
+TJumpToCatchFunc JumpToCatchFunc = 0;
+
 /*
 TL: Obj ShellContext = 0;
 TL: Obj BaseShellContext = 0;
@@ -1162,6 +1164,10 @@ Obj FuncJUMP_TO_CATCH( Obj self, Obj payload)
 #if defined(LIBGAP)
   libgap_call_error_handler();
 #endif
+  STATE(ThrownObject) = payload;
+  if(JumpToCatchFunc != 0) {
+      (*JumpToCatchFunc)();
+  }
   STATE(ThrownObject) = payload;
   syLongjmp(TLS(ReadJmpError), 1);
   return 0;
@@ -3510,6 +3516,9 @@ void InitializeGap (
     NrImportedGVars = 0;
     NrImportedFuncs = 0;
 
+    JumpToCatchFunc = 0;
+
+    sysargv = argv;
     sysenviron = environ;
 
     /* get info structures for the build in modules                        */
