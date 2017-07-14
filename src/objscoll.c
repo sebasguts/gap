@@ -788,7 +788,7 @@ static StructGVarFunc GVarFuncs [] = {
  * Allocate a Plist of the given length, pre-allocating
  * the number of entries given by 'reserved'.
  */
-static inline Obj NewPlist( UInt tnum, UInt len, UInt reserved )
+Obj NewPlist( UInt tnum, UInt len, UInt reserved )
 {
     Obj obj;
     obj = NEW_PLIST( tnum, reserved );
