@@ -297,6 +297,9 @@ void libgap_SetElmPList(Obj list, UInt pos, Obj val)
 Obj libgap_ElmPList(Obj list, UInt pos)
 { return ELM_PLIST(list, pos); }
 
+Obj libgap_LenPlist(Obj list )
+{ return LEN_PLIST( list ); }
+
 Obj libgap_ValGVar(const char *name)
 {
     UInt varnum = GVarName(name);
