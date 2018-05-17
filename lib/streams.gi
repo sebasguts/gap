@@ -234,6 +234,31 @@ function( stream )
     CloseStream(stream);
 end );
 
+BindGlobal("EvaluateString",
+function(string)
+   local instream, outstream, r, res, obj;
+   res := "";
+   instream := InputTextString(string);
+   outstream := OutputTextString(res, true);
+
+   obj := READ_ALL_COMMANDS(instream, outstream, false);
+   for r in obj do
+      if r[1] = true then
+         ViewObj(r[2]);
+      fi;
+   od;
+
+   return res;
+end);
+
+BindGlobal("LIBGAP_EvalString",
+function(string)
+   local instream, obj;
+   instream := InputTextString(string);
+   obj := READ_ALL_COMMANDS(instream, 0, false);
+   return obj;
+end);
+
 
 #############################################################################
 ##
