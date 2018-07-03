@@ -110,14 +110,11 @@ static Int READ_COMMAND(Obj *evalResult)
 Obj FuncREAD_ALL_COMMANDS(Obj self, Obj instream, Obj echo, Obj outputFunc)
 {
     ExecStatus status;
-    Int        resultCount, resultCapacity;
     UInt       dualSemicolon;
     Obj        result, resultList;
     Obj        evalResult;
-    Obj        outstream;
-    Obj        outstreamString;
-    Obj        outstreamStringCopy;
-    Obj        outputFunc_return;
+    Obj        outstream = 0;
+    Obj        outstreamString = 0;
 
     /* try to open the streams */
     if (!OpenInputStream(instream, echo == True)) {
@@ -130,24 +127,17 @@ Obj FuncREAD_ALL_COMMANDS(Obj self, Obj instream, Obj echo, Obj outputFunc)
         outstream = DoOperation2Args(ValGVar(GVarName("OutputTextString")),
                                      outstreamString, True);
     }
-    else {
-        outstreamString = False;
-        outstream = False;
-    }
-    if (outstream != False && !OpenOutputStream(outstream)) {
+    if (outstream && !OpenOutputStream(outstream)) {
         CloseInput();
         return Fail;
     }
 
-    resultCount = 0;
-    resultCapacity = 16;
-    resultList = NEW_PLIST(T_PLIST, resultCapacity);
-    SET_LEN_PLIST(resultList, resultCount);
+    resultList = NEW_PLIST(T_PLIST, 16);
 
     do {
         ClearError();
 
-        if (outputFunc != False) {
+        if (outstream) {
             // Clean in case Callback function had output
             SET_LEN_STRING(outstreamString, 0);
         }
@@ -156,17 +146,12 @@ Obj FuncREAD_ALL_COMMANDS(Obj self, Obj instream, Obj echo, Obj outputFunc)
             ReadEvalCommand(STATE(BottomLVars), &evalResult, &dualSemicolon);
 
         if (!(status & (STATUS_EOF | STATUS_QUIT | STATUS_QQUIT))) {
-            resultCount++;
-            if (resultCount > resultCapacity) {
-                resultCapacity += 16;
-                GROW_PLIST(resultList, resultCapacity);
-            }
-            if (outputFunc != False) {
-                outstreamStringCopy = CopyToStringRep(outstreamString);
+            if (outstream) {
+                Obj copy = CopyToStringRep(outstreamString);
                 SET_LEN_STRING(outstreamString, 0);
                 result = NEW_PLIST(T_PLIST, 5);
                 SET_LEN_PLIST(result, 5);
-                SET_ELM_PLIST(result, 5, outstreamStringCopy);
+                SET_ELM_PLIST(result, 5, copy);
                 CHANGED_BAG(result);
             }
             else {
@@ -174,9 +159,7 @@ Obj FuncREAD_ALL_COMMANDS(Obj self, Obj instream, Obj echo, Obj outputFunc)
                 SET_LEN_PLIST(result, 3);
             }
             SET_ELM_PLIST(result, 1, False);
-            SET_ELM_PLIST(resultList, resultCount, result);
-            CHANGED_BAG(result_list);
-            SET_LEN_PLIST(resultList, resultCount);
+            PushPlist(resultList, result);
 
             if (!(status & STATUS_ERROR)) {
                 SET_ELM_PLIST(result, 1, True);
@@ -188,15 +171,15 @@ Obj FuncREAD_ALL_COMMANDS(Obj self, Obj instream, Obj echo, Obj outputFunc)
                 }
 
                 if (evalResult && outputFunc != False && !dualSemicolon) {
-                    outputFunc_return = CALL_1ARGS(outputFunc, evalResult);
-                    SET_ELM_PLIST(result, 4, outputFunc_return);
+                    Obj tmp = CALL_1ARGS(outputFunc, evalResult);
+                    SET_ELM_PLIST(result, 4, tmp);
                     CHANGED_BAG(result);
                 }
             }
         }
     } while (!(status & (STATUS_EOF | STATUS_QUIT | STATUS_QQUIT)));
 
-    if (outstream != False)
+    if (outstream)
         CloseOutput();
     CloseInput();
     ClearError();
