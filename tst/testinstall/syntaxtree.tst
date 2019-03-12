@@ -2854,6 +2854,7 @@ rec(
   stats := rec(
       statements := [ rec(
               obj := rec(
+                  string := "1.0",
                   type := "T_FLOAT_EXPR_EAGER",
                   value := 1 ),
               type := "T_RETURN_OBJ" ) ],
