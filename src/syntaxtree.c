@@ -159,6 +159,38 @@ static Obj SyntaxTreeDefaultCompiler(Obj result, Expr expr)
     return result;
 }
 
+#if 0
+// TODO: use the following as start of a "reverse compiler"
+static Obj SyntaxTreeDefaultCoder(Obj input, Expr expr)
+{
+    Obj typeString = ElmPRec(input, RNamName("type"))
+    UInt tnum = ConvertTNumStringToTNum(typeString);
+    
+    // compute how many slots we need
+    UInt slots = comp.arity;
+    
+    if (slots > 0 && comp.args[comp.arity].argcomp == 0) {
+        slots = (comp.arity-1) + LEN_LIST(ElmPRec(input, rnamOfWildcardSlot));
+    }
+    
+    // reserve space for the statement or expressions
+    NewStatWithProf(tnum, slots * sizeof(Expr));
+    
+    for (i = 0; i < comp.arity; i++) {
+        RNam rnam = RNamName(comp.args[i].argname);
+        Obj subast = ElmPRec(input, rnam);
+        
+        // now we need to encode recursively
+        
+        WRITE_EXPR(expr, i, comp.args[i].arg_decode(subast));
+        
+        // TOOD: handle wildcard case
+    }
+    
+}
+#endif
+
+
 static Obj SyntaxTreeEvalCompiler(Obj result, Expr expr)
 {
     AssPRec(result, RNamName("value"), EVAL_EXPR(expr));
