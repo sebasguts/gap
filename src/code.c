@@ -833,7 +833,7 @@ void CodeFuncExprBegin (
     assert( stat1 == OFFSET_FIRST_STAT );
 }
 
-void CodeFuncExprEnd(UInt nr)
+Expr CodeFuncExprEnd(UInt nr, UInt pushExpr)
 {
     Expr                expr;           /* function expression, result     */
     Stat                stat1;          /* single statement of body        */
@@ -900,7 +900,10 @@ void CodeFuncExprEnd(UInt nr)
         len = PushValue(fexp);
         expr = NewExpr( T_FUNC_EXPR, sizeof(Expr) );
         WRITE_EXPR(expr, 0, len);
-        PushExpr( expr );
+        if (pushExpr) {
+            PushExpr(expr);
+        }
+        return expr;
     }
 
     // otherwise, make the function and store it in 'CS(CodeResult)'
@@ -908,6 +911,7 @@ void CodeFuncExprEnd(UInt nr)
         CS(CodeResult) = MakeFunction(fexp);
     }
 
+    return 0;
 }
 
 
