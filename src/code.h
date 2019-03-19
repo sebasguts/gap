@@ -1104,6 +1104,13 @@ void CodeStringExpr(Obj str);
 
 /****************************************************************************
 **
+*F  CodeLazyFloatExpr(<str>,<pushExpr>) . . .  code literal string expression
+*/
+Expr CodeLazyFloatExpr(Obj str, UInt pushExpr);
+
+
+/****************************************************************************
+**
 *F  CodeFloatExpr(<str>) . . . . . . . . . .  code literal float expression
 */
 void CodeFloatExpr(Obj str);
