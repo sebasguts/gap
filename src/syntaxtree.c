@@ -499,6 +499,12 @@ static Obj SyntaxTreeFunc(Obj result, Obj func)
     return result;
 }
 
+static Obj SyntaxTreeCompilePragma(Obj result, Stat stat){
+    Obj message = GET_VALUE_FROM_CURRENT_BODY( READ_EXPR(stat, 0) );
+    AssPRec(result, RNamName("value"), message);
+    return result;
+}
+
 static UInt SyntaxTreeCodeFunc_Internal(Obj node)
 {
     Int narg = INT_INTOBJ(ELM_REC(node, RNamName("narg")));
@@ -695,6 +701,7 @@ static const CompilerT Compilers[] = {
     COMPILER_(T_LIST_TILDE_EXPR, ARGS("list")),
     COMPILER(T_RANGE_EXPR, SyntaxTreeRangeExpr, SyntaxTreeCodeRangeExpr),
     COMPILER(T_STRING_EXPR, SyntaxTreeEvalCompiler, SyntaxTreeCodeValue),
+    COMPILER(T_PRAGMA,SyntaxTreeCompilePragma,SyntaxTreeCodeValue),
     COMPILER(T_REC_EXPR, SyntaxTreeRecExpr, SyntaxTreeCodeRecExpr),
     COMPILER_(T_REC_TILDE_EXPR),
 
