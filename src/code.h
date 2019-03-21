@@ -268,6 +268,7 @@ enum STAT_TNUM {
         T_INFO,
         T_ASSERT_2ARGS,
         T_ASSERT_3ARGS,
+        T_PRAGMA,
 
     END_ENUM_RANGE(LAST_STAT_TNUM),
 
@@ -1100,6 +1101,8 @@ void CodeListExprEnd(UInt nr, UInt range, UInt top, UInt tilde);
 *F  CodeStringExpr(<str>) . . . . . . . . . .  code literal string expression
 */
 void CodeStringExpr(Obj str);
+
+void CodePragma(Obj pragma);
 
 
 /****************************************************************************

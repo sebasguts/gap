@@ -2201,6 +2201,19 @@ void           IntrStringExpr (
     PushObj( string );
 }
 
+void           IntrPragma (
+    Obj               pragma )
+{
+    SKIP_IF_RETURNING();
+    SKIP_IF_IGNORING();
+    if ( STATE(IntrCoding)    > 0 ) {
+        CodePragma( pragma );
+    } else {
+        // Push a void when interpreting
+        PushVoidObj();
+    }
+}
+
 /****************************************************************************
 **
 *F  IntrRecExprBegin(<top>) . . . . . . . . . .  interpret record expr, begin
