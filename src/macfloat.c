@@ -55,7 +55,8 @@ static Obj TypeMacfloat(Obj val)
 
 // helper function for printing a "decimal" representation of a macfloat
 // into a buffer.
-static void PrintMacfloatToBuf(char *buf, size_t bufsize, Double val, int precision)
+static void
+PrintMacfloatToBuf(char * buf, size_t bufsize, Double val, int precision)
 {
     // handle printing of NaN and infinities ourselves, to ensure
     // they are printed uniformly across all platforms
@@ -70,9 +71,15 @@ static void PrintMacfloatToBuf(char *buf, size_t bufsize, Double val, int precis
     }
     else {
         snprintf(buf, bufsize, "%.*" PRINTFFORMAT, precision, val);
-        if(!strchr(buf, '.'))
-        {
-          strcat(buf, ".");
+        if (strlen(buf) < bufsize) {
+            char * loc = strchr(buf, 'e');
+            if (loc && !strchr(buf, '.')) {
+                memmove(loc + 1, loc, strlen(loc) + 1);
+                loc[0] = '.';
+            }
+            else if (!strchr(buf, '.')) {
+                strxcat(buf, ".", bufsize);
+            }
         }
     }
 }
